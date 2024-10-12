@@ -1,21 +1,18 @@
 function sendMessage() {
     let messageInput = document.getElementById('message-input');
     let message = messageInput.value;
-    displayMessage('user', message)
-    
+    displayMessage('user', message);
+
     // Get the selected function from the dropdown menu
     let functionSelect = document.getElementById('function-select');
     let selectedFunction = functionSelect.value;
-    
+
     // Send an AJAX request to the Flask API endpoint based on the selected function
     let xhr = new XMLHttpRequest();
     let url;
 
     switch (selectedFunction) {
-        case 'search':
-            url = '/search';
-            break;
-        case 'kbanswer':
+        case 'kb':
             url = '/kbanswer';
             break;
         case 'answer':
@@ -24,17 +21,19 @@ function sendMessage() {
         default:
             url = '/answer';
     }
-    
+
     xhr.open('POST', url);
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.onload = function() {
         if (xhr.status === 200) {
             let response = JSON.parse(xhr.responseText);
             displayMessage('assistant', response.message);
+        } else {
+            displayMessage('assistant', 'Error: Unable to process your request.');
         }
     };
     xhr.send(JSON.stringify({message: message}));
-    
+
     // Clear the input field
     messageInput.value = '';
 }
@@ -45,38 +44,30 @@ function displayMessage(sender, message) {
 
     if (sender === 'assistant') {
         messageDiv.classList.add('assistant-message');
-        
-        // Create a span for the Chatbot text
-        let chatbotSpan = document.createElement('span');
-        chatbotSpan.innerHTML = "<b>Chatbot:</b> ";
-        messageDiv.appendChild(chatbotSpan);
-        
-        // Append the message to the Chatbot span
-        messageDiv.innerHTML += message;
+        messageDiv.innerHTML = "<b>ChatWise:</b> " + message;
     } else {
         messageDiv.classList.add('user-message');
-
-        let userSpan = document.createElement('span');
-        userSpan.innerHTML = "<b>User:</b> ";
-        messageDiv.appendChild(userSpan);
-        
-        // Append the message to the span
-        messageDiv.innerHTML += message;
+        messageDiv.innerHTML = "<b>User:</b> " + message;
     }
 
     // Create a timestamp element
     let timestamp = document.createElement('span');
     timestamp.classList.add('timestamp');
     let currentTime = new Date().toLocaleTimeString();
-    timestamp.innerText = " ["+ currentTime+"]";
+    timestamp.innerText = " [" + currentTime + "]";
     messageDiv.appendChild(timestamp);
 
     chatContainer.appendChild(messageDiv);
+    chatContainer.scrollTop = chatContainer.scrollHeight; // Auto-scroll
 
-    // Scroll to the bottom of the chat container
-    chatContainer.scrollTop = chatContainer.scrollHeight;
+    // Implement loading indicators
+    setTimeout(() => {
+        displayMessage('assistant', '...');
+    }, 1000);
 }
 
-// Handle button click event
-let sendButton = document.getElementById('send-btn');
-sendButton.addEventListener('click', sendMessage);
+// Clear chat history
+document.getElementById('clear-btn').addEventListener('click', function() {
+    document.getElementById('chat-container').innerHTML = '';
+});
+document.getElementById('send-btn').addEventListener('click', sendMessage);
