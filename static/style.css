@@ -4,18 +4,21 @@
     height: 500px;
     padding: 10px;
     overflow-y: scroll;
+    background-color: #f9f9f9;
 }
 
 .user-message {
     background-color: #eaf2f8;
     padding: 5px;
     margin-bottom: 10px;
+    border-radius: 5px;
 }
 
 .assistant-message {
     background-color: #f1f0f0;
     padding: 5px;
     margin-bottom: 10px;
+    border-radius: 5px;
 }
 
 .text-input {
@@ -24,4 +27,12 @@
     padding: 10px;
     border-radius: 5px;
     border: 1px solid #ccc;
+}
+
+h1 {
+    color: #007bff;
+}
+
+h4 {
+    color: #6c757d;
 }
