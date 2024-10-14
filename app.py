@@ -25,20 +25,43 @@ def search_knowledgebase(message):
        sources += "Source " + str(count) + "\n"
        sources += source.page_content + "\n"
 
+from langchain.schema import HumanMessage, AIMessage
+import os
+
 def answer_as_chatbot(message):
+    # Initialize memory
     memory = ConversationBufferMemory()
+
+    # Define the prompt template
     template = """You are an expert Python developer. 
     Answer the following question in a clear and informative manner:
     Question: {question}
     Answer:"""
     prompt = PromptTemplate(template=template, input_variables=["question"])
-    memory.chat_memory.add_message(HumanMessage(message))
-    llm = Cohere(cohere_api_key=os.environ["COHERE_API_KEY"])
+
+    # Add user message to memory
+    memory.chat_memory.add_message(HumanMessage(content=message))
+
+    # Initialize the language model (Cohere) and the LLM chain
+    try:
+        llm = Cohere(cohere_api_key=os.environ["COHERE_API_KEY"])
+    except KeyError:
+        return "Error: COHERE_API_KEY not found in environment variables."
+
     llm_chain = LLMChain(prompt=prompt, llm=llm)
-    res = llm_chain.run(message)
-    # Add AI message to memory
+
+    # Run the LLM chain and generate the response
+    try:
+        res = llm_chain.run(message)
+    except Exception as e:
+        return f"Error generating response: {e}"
+
+    # Add AI response to memory
     memory.chat_memory.add_message(AIMessage(content=res))
+
+    # Return the response
     return res
+
 
 def load_db():
     try:
