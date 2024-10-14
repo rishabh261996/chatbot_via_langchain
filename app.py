@@ -8,6 +8,9 @@ from langchain.memory import ConversationBufferMemory
 from langchain.chains import RetrievalQA
 from langchain.embeddings import CohereEmbeddings
 from langchain.vectorstores import Chroma
+from langchain.schema import HumanMessage, AIMessage
+
+
 
 app = Flask(__name__)
 
