@@ -38,7 +38,7 @@ def answer_as_chatbot(message):
 
 def load_db():
     try:
-        embeddings = CohereEmbeddings(cohere_api_key=os.environ['qytjlchOMo44rYMuzGtEOuoCBPx0NqOqRWgA5Qp2'])
+        embeddings = CohereEmbeddings(cohere_api_key=os.environ[""COHERE_API_KEY"])
         vectordb = Chroma(persist_directory='db', embedding_function=embeddings)
         qa = RetrievalQA.from_chain_type(
             llm=Cohere(),
